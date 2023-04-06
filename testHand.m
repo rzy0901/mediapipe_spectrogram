@@ -1,6 +1,5 @@
 clear; clc; close all;
 load('./data.mat')
-% keypoints(:,:,2) = -keypoints(:,:,2);
 keypoints_test = smoothdata(keypoints,1,"rlowess",5);
 % % figure;
 % % subplot(131),plot(keypoints(:,1,1)); hold on; plot(keypoints_test(:,1,1)); xlabel('frame'); ylabel('x'); legend('raw','smoothed');

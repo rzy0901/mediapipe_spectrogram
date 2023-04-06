@@ -291,7 +291,7 @@ class MediaPipeHand:
                 # Convert relative 3D joint to angle
                 self.param[i]['angle'] = self.convert_joint_to_angle(self.param[i]['joint'])
                 # Convert relative 3D joint to camera coordinate
-                self.convert_joint_to_camera_coor(self.param[i], self.intrin)
+                self.convert_joint_to_camera_coor(self.param[i], self.intrin,use_solvepnp=True)
 
         return self.param
 
@@ -347,17 +347,19 @@ class MediaPipeHand:
             intrin_mat = np.asarray([[fx,0,cx],[0,fy,cy],[0,0,1]])
             dist_coeff = np.zeros(4)
 
-            temp = param['joint'][idx]
             ret, param['rvec'], param['tvec'] = cv2.solvePnP(
                 param['joint'][idx], param['keypt'][idx],
                 intrin_mat, dist_coeff, param['rvec'], param['tvec'],
                 useExtrinsicGuess=True)
             # Add tvec to all joints
-            temp2 = param['tvec']
-            temp3 = param['joint']
-
-            param['joint'] += param['tvec']
-
+            # param['joint'] += param['tvec']        
+            
+            R, _ = cv2.Rodrigues(param['rvec'])
+            transformation = np.eye(4, dtype=np.float32)
+            transformation[:3,:3] = R
+            transformation[:3,3] = param['tvec'].squeeze()
+            model_points_hom = np.concatenate((param['joint'], np.ones((21, 1))), axis=1)
+            param['joint'] = (model_points_hom @ transformation.T)[:,0:3]
         else:
             # Method 2:
             A = np.zeros((len(idx),2,3))
