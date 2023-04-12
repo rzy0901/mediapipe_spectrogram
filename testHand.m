@@ -1,11 +1,13 @@
 clear; clc; close all;
 load('./data.mat')
-keypoints_test = smoothdata(keypoints,1,"rlowess",5);
+keypoints = keypoints(3:end,:,:);
+timestampList = timestampList(3:end);
+% keypoints_test = smoothdata(keypoints,1,"rlowess",5);
 % % figure;
 % % subplot(131),plot(keypoints(:,1,1)); hold on; plot(keypoints_test(:,1,1)); xlabel('frame'); ylabel('x'); legend('raw','smoothed');
 % % subplot(132),plot(keypoints(:,1,2)); hold on; plot(keypoints_test(:,1,2)); xlabel('frame'); ylabel('y'); legend('raw','smoothed');
 % % subplot(133),plot(keypoints(:,1,3)); hold on; plot(keypoints_test(:,1,3)); xlabel('frame'); ylabel('z'); legend('raw','smoothed');
-keypoints = keypoints_test;
+% keypoints = keypoints_test;
 Njoints = size(keypoints,2);
 Nframes = length(timestampList);
 frameLength = 1/28.5; % fps =  28.5;
@@ -18,7 +20,7 @@ HAND_PINKY_FINGER_CONNECTIONS = [18 19; 19 20; 20 21];
 connection = [HAND_PALM_CONNECTIONS; HAND_THUMB_CONNECTIONS; HAND_INDEX_FINGER_CONNECTIONS; HAND_MIDDLE_FINGER_CONNECTIONS; HAND_RING_FINGER_CONNECTIONS; HAND_PINKY_FINGER_CONNECTIONS];
 T = frameLength*Nframes;
 Radar_pos = [0 0 0]; % XYZ
-drawScenario = true;
+drawScenario = false;
 %% plot
 if drawScenario == true
     hf = figure;
@@ -107,7 +109,7 @@ F = fs;
 figure;% figure('Position',[500 200 900 600])
 colormap(jet)
 spectrogram(RCS,kaiser(256,15),250,512,F,'centered','yaxis');
-% clim = get(gca,'CLim');
-% set(gca,'CLim',clim(2) + [-60 0]);
+clim = get(gca,'CLim');
+set(gca,'CLim',clim(2) + [-60 0]);
 title('Micro-Doppler Signature', 'Fontsize',12,'color','k')
 drawnow

@@ -2,11 +2,13 @@ import cv2
 import time
 import numpy as np
 
-from utils.utils_display import DisplayHand, DisplayBody, DisplayHolistic
-from utils.utils_mediapipe import MediaPipeHand, MediaPipeBody, MediaPipeHolistic
+from utils.utils_display import DisplayHand
+from utils.utils_mediapipe import MediaPipeHand
 from scipy.io import savemat
+from utils.one_euro_filter import OneEuroFilter
 
-loop = True
+loop = False
+smoothing = False
 input = "./videos/1-1.mp4"
 cap = cv2.VideoCapture(input) # Read from .mp4 file
 fps_video = cap.get(cv2.CAP_PROP_FPS)
@@ -32,7 +34,6 @@ count = 0
 prev_time = time.time()
 while cap.isOpened():
     ret, img = cap.read()
-    count += 1
     if not ret:
         cap.set(cv2.CAP_PROP_POS_FRAMES, 0) # Loop back
         ret, img = cap.read()
@@ -48,16 +49,23 @@ while cap.isOpened():
     curr_time = time.time()
     fps = 1/(curr_time-prev_time)
     param[0]['fps'] = fps
-    prev_time = curr_time    
+    prev_time = curr_time
+    if smoothing == True:
+        if count == 0:
+            # Initialize the one-euro filter with suitable parameters
+            filter = OneEuroFilter(x0=param[0]['joint'], dx0=0.0, t0 = 0,min_cutoff=0.004, beta=0.7, d_cutoff=1.0)
+        else:
+            param[0]['joint'] = filter(param[0]['joint'], t = count*1/fps_video)
     img.flags.writeable = True
-    # Display keypoint
-    cv2.imshow('img 2D', disp.draw2d(img, param))
-    if count <= Nframes:
+    # # Display keypoint
+    # cv2.imshow('img 2D', disp.draw2d(img, param))
+    if count < Nframes:
         out.write(img)
         temp = param[0]['joint']
         keypoints.append(temp.copy())
-        timestampList.append(cap.get(cv2.CAP_PROP_POS_MSEC))
-        if count == Nframes:
+        # timestampList.append(cap.get(cv2.CAP_PROP_POS_MSEC))
+        timestampList.append(count*1000/fps_video) # in milliseconds
+        if count == Nframes-1:
             savemat('./data.mat',{'fps':fps_video,'timestampList':timestampList,'keypoints':keypoints})
             print("mat saved!")
             if loop == False:
@@ -66,7 +74,8 @@ while cap.isOpened():
     disp.draw3d(param, img)
     disp.vis.update_geometry(None)
     disp.vis.poll_events()
-    disp.vis.update_renderer()    
+    disp.vis.update_renderer()
+    count += 1    
     key = cv2.waitKey(1)
     if key==27:
         break
