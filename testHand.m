@@ -1,8 +1,6 @@
 clear; clc; close all;
 load('./data.mat')
-keypoints = keypoints(3:end,:,:);
-timestampList = timestampList(3:end);
-% keypoints_test = smoothdata(keypoints,1,"rlowess",5);
+% keypoints_test = smoothdata(keypoints,1,"movmedian",10);
 % % figure;
 % % subplot(131),plot(keypoints(:,1,1)); hold on; plot(keypoints_test(:,1,1)); xlabel('frame'); ylabel('x'); legend('raw','smoothed');
 % % subplot(132),plot(keypoints(:,1,2)); hold on; plot(keypoints_test(:,1,2)); xlabel('frame'); ylabel('y'); legend('raw','smoothed');
@@ -20,7 +18,7 @@ HAND_PINKY_FINGER_CONNECTIONS = [18 19; 19 20; 20 21];
 connection = [HAND_PALM_CONNECTIONS; HAND_THUMB_CONNECTIONS; HAND_INDEX_FINGER_CONNECTIONS; HAND_MIDDLE_FINGER_CONNECTIONS; HAND_RING_FINGER_CONNECTIONS; HAND_PINKY_FINGER_CONNECTIONS];
 T = frameLength*Nframes;
 Radar_pos = [0 0 0]; % XYZ
-drawScenario = false;
+drawScenario = true;
 %% plot
 if drawScenario == true
     hf = figure;
@@ -66,7 +64,7 @@ if drawScenario == true
 end
 %% Spectrogram
 % Interpolation of the data:
-fs = 4000; % new frame rate
+fs = 2000; % new frame rate
 TimeSamples = linspace(0,T,Nframes);
 NframesNew = round(T*fs); % Number of frame after interpolation
 TimeSamplesNew = linspace(0,T,NframesNew);

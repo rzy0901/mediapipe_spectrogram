@@ -9,6 +9,7 @@ from utils.one_euro_filter import OneEuroFilter
 
 loop = False
 smoothing = False
+static_hand = False
 input = "./videos/1-1.mp4"
 cap = cv2.VideoCapture(input) # Read from .mp4 file
 fps_video = cap.get(cv2.CAP_PROP_FPS)
@@ -44,7 +45,7 @@ while cap.isOpened():
     # To improve performance, optionally mark image as not writeable to pass by reference
     img.flags.writeable = False
     # Feedforward to extract keypoint
-    param = pipe.forward(img)
+    param = pipe.forward(img,static_hand=static_hand)
     # Compute FPS
     curr_time = time.time()
     fps = 1/(curr_time-prev_time)
@@ -57,8 +58,8 @@ while cap.isOpened():
         else:
             param[0]['joint'] = filter(param[0]['joint'], t = count*1/fps_video)
     img.flags.writeable = True
-    # # Display keypoint
-    # cv2.imshow('img 2D', disp.draw2d(img, param))
+    # Display keypoint
+    cv2.imshow('img 2D', disp.draw2d(img, param))
     if count < Nframes:
         out.write(img)
         temp = param[0]['joint']
