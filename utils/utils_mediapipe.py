@@ -85,6 +85,8 @@ class MediaPipeHand:
                 # https://github.com/google/mediapipe/issues/1351
                 'visible' : np.zeros(21), # Visibility: Likelihood [0,1] of being visible (present and not occluded) in the image
                 'presence': np.zeros(21), # Presence: Likelihood [0,1] of being present in the image or if its located outside the image
+                'transformation': np.eye(4, dtype=np.float64),
+                'static_transformation': np.eye(4, dtype=np.float64)
             }
             self.param.append(p)
 
@@ -194,22 +196,19 @@ class MediaPipeHand:
             # param['joint'] += param['tvec']        
             
             R, _ = cv2.Rodrigues(param['rvec'])
-            transformation = np.eye(4, dtype=np.float32)
-            transformation[:3,:3] = R
-            transformation[:3,3] = param['tvec'].squeeze()
+            param['transformation'][:3,:3] = R
+            param['transformation'][:3,3] = param['tvec'].squeeze()
             model_points_hom = np.concatenate((param['handworld_joint'], np.ones((21, 1))), axis=1)
-            world_points_in_camera = (model_points_hom @ transformation.T)[:,0:3]
-            # world_points_in_camera_z = world_points_in_camera[:, 2].reshape(-1, 1)
-            # world_points_in_camera[:, :2] =  (np.concatenate([param['keypt'][idx], np.ones((param['keypt'][idx].shape[0], 1))], axis=1) @ np.linalg.inv(intrin_mat).T * world_points_in_camera_z)[:, :2]
+            if param['count'] == 0:
+                param['static_transformation'][:3,:3] = R
+                param['static_transformation'][:3,3] = param['tvec'].squeeze()
             if not static_hand:
+                world_points_in_camera = (model_points_hom @ param['transformation'].T)[:,0:3]
+                # world_points_in_camera_z = world_points_in_camera[:, 2].reshape(-1, 1)
+                # world_points_in_camera[:, :2] =  (np.concatenate([param['keypt'][idx], np.ones((param['keypt'][idx].shape[0], 1))], axis=1) @ np.linalg.inv(intrin_mat).T * world_points_in_camera_z)[:, :2]
                 param['joint'] = world_points_in_camera
             else:
-                if param['count'] == 0: # Use transformation matrix of first frame
-                    global transformation_global 
-                    transformation_global = transformation
-                    param['joint'] = world_points_in_camera
-                else:
-                    param['joint'] = (model_points_hom @ transformation_global.T)[:,0:3]
+                param['joint'] = (model_points_hom @ param['static_transformation'].T)[:,0:3]
         else:
             # Method 2:
             A = np.zeros((len(idx),2,3))

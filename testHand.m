@@ -64,7 +64,7 @@ if drawScenario == true
 end
 %% Spectrogram
 % Interpolation of the data:
-fs = 2000; % new frame rate
+fs = 1000; % new frame rate
 TimeSamples = linspace(0,T,Nframes);
 NframesNew = round(T*fs); % Number of frame after interpolation
 TimeSamplesNew = linspace(0,T,NframesNew);

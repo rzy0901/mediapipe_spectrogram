@@ -7,10 +7,10 @@ from utils.utils_mediapipe import MediaPipeHand
 from scipy.io import savemat
 from utils.one_euro_filter import OneEuroFilter
 
-loop = False
+loop = True
 smoothing = False
 static_hand = False
-input = "./videos/1-1.mp4"
+input = "./videos/2.mp4"
 cap = cv2.VideoCapture(input) # Read from .mp4 file
 fps_video = cap.get(cv2.CAP_PROP_FPS)
 frame_width  = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -19,6 +19,7 @@ out = cv2.VideoWriter('./output.mp4',cv2.VideoWriter_fourcc(*'MP4V'), fps_video,
 Nframes = cap.get(cv2.CAP_PROP_FRAME_COUNT)
 timestampList = []
 keypoints = []
+transformations = []
 print("Video property: fps=", fps_video, "frames=", Nframes,"frame_width=",frame_width,"frame_height=",frame_height)
 intrin = {
     'fx': frame_width*0.9, # Approx 0.7w < f < w https://www.learnopencv.com/approximate-focal-length-for-webcams-and-cell-phone-cameras/
@@ -64,10 +65,11 @@ while cap.isOpened():
         out.write(img)
         temp = param[0]['joint']
         keypoints.append(temp.copy())
+        transformations.append(param[0]['transformation'].copy())
         # timestampList.append(cap.get(cv2.CAP_PROP_POS_MSEC))
         timestampList.append(count*1000/fps_video) # in milliseconds
         if count == Nframes-1:
-            savemat('./data.mat',{'fps':fps_video,'timestampList':timestampList,'keypoints':keypoints})
+            savemat('./data.mat',{'fps':fps_video,'timestampList':timestampList,'keypoints':keypoints,'transformations':transformations})
             print("mat saved!")
             if loop == False:
                 break
