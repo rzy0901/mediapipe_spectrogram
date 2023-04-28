@@ -8,8 +8,8 @@ from scipy.io import savemat
 from utils.one_euro_filter import OneEuroFilter
 
 loop = True
-smoothing = False
-static_hand = False
+smoothing = True
+static_hand = False     # Fix hand position to reduce jitter if knowing hand does the action in place.
 input = "./videos/2.mp4"
 cap = cv2.VideoCapture(input) # Read from .mp4 file
 fps_video = cap.get(cv2.CAP_PROP_FPS)
