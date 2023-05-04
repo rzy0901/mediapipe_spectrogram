@@ -14,7 +14,7 @@ import argparse
 
 from utils.utils_display import DisplayHand
 from utils.utils_mediapipe import MediaPipeHand
-from utils.one_euro_filter import OneEuroFilter
+from utils.filters import OneEuroFilter, MovingAverageFilter, MovingMedianFilter
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-m', '--mode', default='hand',
@@ -81,14 +81,18 @@ while cap.isOpened():
             p['fps'] = fps
     prev_time = curr_time
 
-    if mode == 'hand':
-        if count == 0:
-            # Initialize the one-euro filter with suitable parameters
-            filter = OneEuroFilter(
-                x0=param[0]['joint'], dx0=0.0, min_cutoff=0.004, beta=0.7, d_cutoff=1.0)
-        else:
-            param[0]['joint'] = filter(param[0]['joint'])
-    
+    # if mode == 'hand':
+    #     if count == 0:
+    #         # Initialize the one-euro filter with suitable parameters
+    #         filter = OneEuroFilter(
+    #             x0=param[0]['joint'], dx0=0.0, min_cutoff=0.004, beta=0.7, d_cutoff=1.0)
+    #     else:
+    #         param[0]['joint'] = filter(param[0]['joint'])
+    # if mode == 'hand':
+    #     if count == 0:
+    #         filter = MovingAverageFilter(window_size=3)
+    #     param[0]['joint'] = filter(param[0]['joint'])
+
     img.flags.writeable = True
     # Display keypoint
     cv2.imshow('img 2D', disp.draw2d(img, param))

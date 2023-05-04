@@ -1,11 +1,5 @@
 clear; clc; close all;
-load('./data.mat')
-% keypoints_test = smoothdata(keypoints,1,"movmedian",10);
-% % figure;
-% % subplot(131),plot(keypoints(:,1,1)); hold on; plot(keypoints_test(:,1,1)); xlabel('frame'); ylabel('x'); legend('raw','smoothed');
-% % subplot(132),plot(keypoints(:,1,2)); hold on; plot(keypoints_test(:,1,2)); xlabel('frame'); ylabel('y'); legend('raw','smoothed');
-% % subplot(133),plot(keypoints(:,1,3)); hold on; plot(keypoints_test(:,1,3)); xlabel('frame'); ylabel('z'); legend('raw','smoothed');
-% keypoints = keypoints_test;
+load('./data.mat');
 Njoints = size(keypoints,2);
 Nframes = length(timestampList);
 frameLength = 1/28.5; % fps =  28.5;
@@ -32,9 +26,15 @@ if drawScenario == true
         hand = plot3(z,x,y,'.','markersize', 13);
         hold on;
         axis equal;
-%         xlim([-1 0.2]); % Z
-%         ylim([-0.3 0.3]); % X
-%         zlim([-0.3 0.3]); % Y
+        xmin = min([0 Radar_pos(1) min(keypoints(:,:,1),[],'all')]);
+        xmax = max([0 Radar_pos(1) max(keypoints(:,:,1),[],'all')]);
+        ymin = min([0 Radar_pos(2) min(keypoints(:,:,2),[],'all')]);
+        ymax = max([0 Radar_pos(2) max(keypoints(:,:,2),[],'all')]);
+        zmin = min([0 Radar_pos(3) min(keypoints(:,:,3),[],'all')]);
+        zmax = max([0 Radar_pos(3) max(keypoints(:,:,3),[],'all')]);
+        xlim([zmin zmax]); % Z
+        ylim([xmin xmax]); % X
+        zlim([ymin ymax]); % Y
 %         view(30,30)
 %         view(2)
 %         view(30,5)
@@ -51,20 +51,22 @@ if drawScenario == true
         xlabel('Z(m)'); ylabel('X(m)'); zlabel('Y(m)'); title(sprintf('Timestamp: %f (ms)',timestampList(ii)));
         grid on;
         legend([camera radar hand] ,'camera','radar','hand');
+        set(gcf,'units','normalized','outerposition',[0 0 1 1]);
+        set(gca,'ZDir','reverse'); %Y
         drawnow;
         Frame=getframe(gcf);
         Image=frame2im(Frame);
         [Image,map]=rgb2ind(Image,256);
         if ii == 1
-            imwrite(Image,map,'test.gif','gif', 'Loopcount',inf,'DelayTime',0.3);
+            imwrite(Image,map,'test.gif','gif', 'Loopcount',inf,'DelayTime',0.033);
         else
-            imwrite(Image,map,'test.gif','gif','WriteMode','append','DelayTime',0.3);
+            imwrite(Image,map,'test.gif','gif','WriteMode','append','DelayTime',0.033);
         end
     end
 end
 %% Spectrogram
 % Interpolation of the data:
-fs = 1000; % new frame rate
+fs = 1500; % new frame rate
 TimeSamples = linspace(0,T,Nframes);
 NframesNew = round(T*fs); % Number of frame after interpolation
 TimeSamplesNew = linspace(0,T,NframesNew);
