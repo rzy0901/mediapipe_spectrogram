@@ -83,8 +83,8 @@ class MediaPipeHand:
                 'tvec'    : np.asarray([0,0,0.6]), # Global translation vector (m) Note: Init z direc to some +ve dist (i.e. in front of camera), to prevent solvepnp from wrongly estimating z as -ve
                 'fps'     : -1, # Frame per sec
                 # https://github.com/google/mediapipe/issues/1351
-                'visible' : np.zeros(21), # Visibility: Likelihood [0,1] of being visible (present and not occluded) in the image
-                'presence': np.zeros(21), # Presence: Likelihood [0,1] of being present in the image or if its located outside the image
+                # 'visible' : np.zeros(21), # Visibility: Likelihood [0,1] of being visible (present and not occluded) in the image
+                # 'presence': np.zeros(21), # Presence: Likelihood [0,1] of being present in the image or if its located outside the image
                 'transformation': np.eye(4, dtype=np.float64),
                 'static_transformation': np.eye(4, dtype=np.float64)
             }
@@ -116,9 +116,9 @@ class MediaPipeHand:
                     self.param[i]['keypt'][j,0] = lm.x * img_width  # Convert normalized coor to pixel [0,1] -> [0,width]
                     self.param[i]['keypt'][j,1] = lm.y * img_height # Convert normalized coor to pixel [0,1] -> [0,height]
 
-                    # Ignore it https://github.com/google/mediapipe/issues/1320
-                    self.param[i]['visible'][j] = lm.visibility
-                    self.param[i]['presence'][j] = lm.presence
+                    # # Ignore it https://github.com/google/mediapipe/issues/1320
+                    # self.param[i]['visible'][j] = lm.visibility
+                    # self.param[i]['presence'][j] = lm.presence
 
         if result.multi_hand_world_landmarks is not None:
             for i, res in enumerate(result.multi_hand_world_landmarks):

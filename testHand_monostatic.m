@@ -1,5 +1,5 @@
 clear; clc; close all;
-load('./data.mat');
+load('./output/push_pull.mat');
 Njoints = size(keypoints,2);
 Nframes = length(timestampList);
 frameLength = 1/28.5; % fps =  28.5;

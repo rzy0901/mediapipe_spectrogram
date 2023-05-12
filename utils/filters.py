@@ -75,15 +75,15 @@ class MovingMedianFilter:
             self.prev_values.pop(0)
         return np.median(self.prev_values, axis=0)
 
-class LowPassFilter:
-    def __init__(self, fs=10, low_cut=0.05, order=2):
-        self.fs = fs
-        self.nyq = 0.5 * fs
-        self.low = low_cut / self.nyq
-        self.order = order
-        self.b, self.a = butter(self.order, self.low, 'lowpass', analog=False)
+# class LowPassFilter:
+#     def __init__(self, fs=10, low_cut=0.05, order=2):
+#         self.fs = fs
+#         self.nyq = 0.5 * fs
+#         self.low = low_cut / self.nyq
+#         self.order = order
+#         self.b, self.a = butter(self.order, self.low, 'lowpass', analog=False)
 
-    def __call__(self, signal):
-        f_state = np.zeros((self.order, signal.shape[1]))
-        y, f_state = lfilter(self.b, self.a, signal, axis=0, zi=f_state)
-        return y
+#     def __call__(self, signal):
+#         f_state = np.zeros((self.order, signal.shape[1]))
+#         y, f_state = lfilter(self.b, self.a, signal, axis=0, zi=f_state)
+#         return y
