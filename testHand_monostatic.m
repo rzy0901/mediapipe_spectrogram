@@ -23,7 +23,7 @@ if drawScenario == true
         y = squeeze(keypoints(ii,:,2));
         z = squeeze(keypoints(ii,:,3));
         % plot
-        hand = plot3(z,x,y,'.','markersize', 13);
+        hand = plot3(z,x,y,'.','markersize', 30,'Color',"blue");
         hold on;
         axis equal;
         xmin = min([0 Radar_pos(1) min(keypoints(:,:,1),[],'all')]);
@@ -38,8 +38,8 @@ if drawScenario == true
 %         view(30,30)
 %         view(2)
 %         view(30,5)
-        camera = scatter3(0,0,0,[],"red",'o','DisplayName','Camera');
-        radar = scatter3(Radar_pos(3),Radar_pos(1),Radar_pos(2),[],"black",'*','DisplayName','Radar');
+        camera = scatter3(0,0,0,200,"red",'o','DisplayName','Camera');
+        radar = scatter3(Radar_pos(3),Radar_pos(1),Radar_pos(2),200,"black",'*','DisplayName','Radar');
         for jj = 1:1:size(connection,1)
             plot3(z(connection(jj,:)),x(connection(jj,:)),y(connection(jj,:)),'Color','b','LineWidth',0.05);
         end
@@ -85,18 +85,26 @@ lambda = c/fc; %(m) wavelength
 for nf = 1:NframesNew
     rcs = 0;
     for jj = 1:1:size(connection,1)
-        r1(1:3) = keypointsNew(nf,connection(jj,1),1:3);
-        r2(1:3) = keypointsNew(nf,connection(jj,2),1:3);
-        r1r2_mid=0.5*(r1+r2);
-        R = norm(r1r2_mid-Radar_pos);
-        R1 = Radar_pos - r1r2_mid;
-        R2 = r2-r1;
-        Cos_Theta = ((R1(1)*R2(1))+(R1(2)*R2(2))+(R1(3)*R2(3)))/norm(R1)/norm(R2);
+        joint1(1:3) = keypointsNew(nf,connection(jj,1),1:3);
+        joint2(1:3) = keypointsNew(nf,connection(jj,2),1:3);
+        % origin of constructed ellipsoid
+        mid = 0.5*(joint1+joint2);
+        R = norm(mid-Radar_pos);
+        % aspect vector
+        aspect = joint1 - joint2;
+        % semi-axis length
+        a = norm(aspect)/2;
+        b = norm(aspect)/2;
+        c = norm(aspect);
+        % Calculate theta
+        Cos_Theta = dot(Radar_pos-mid,aspect)/norm(mid-Radar_pos)/norm(aspect);
         Theta = acos(Cos_Theta);
-        Phase = exp(-1i*4*pi*R/lambda)/R^2; 
-        height = norm(r2-r1);
-        radius = height/4;
-        Amp = sqrt(1/4*pi*radius^4*height^2/(radius^2*(sin(Theta))^2+1/4*height^2*(cos(Theta))^2));
+        % Calculate phi
+        Sin_Phi = (Radar_pos(2) - mid(2))/sqrt((Radar_pos(1)-mid(1))^2+(Radar_pos(2)-mid(2))^2);
+        Phi = asin(Sin_Phi);
+        % rcsellipsoid/R^2 is based on monostatic radar range equation
+        Amp = rcsellipsoid(a,b,c,Phi,Theta)/R^2;
+        Phase = exp(-1i*4*pi*R/lambda); 
         rcs_joint = Amp*Phase;
         rcs = rcs + rcs_joint;
     end

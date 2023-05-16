@@ -90,19 +90,31 @@ lambda = c/fc; %(m) wavelength
 for nf = 1:NframesNew
     rcs = 0;
     for jj = 1:1:size(connection,1)
-        r1(1:3) = keypointsNew(nf,connection(jj,1),1:3);
-        r2(1:3) = keypointsNew(nf,connection(jj,2),1:3);
-        r1r2_mid=0.5*(r1+r2);
-        R = norm(r1r2_mid-Tx_pos);
-        
-        R1 = Tx_pos - r1r2_mid;
-        R2 = r2-r1;
-        Cos_Theta = ((R1(1)*R2(1))+(R1(2)*R2(2))+(R1(3)*R2(3)))/norm(R1)/norm(R2);
-        Theta = acos(Cos_Theta);
-        Phase = exp(-1i*4*pi*R/lambda)/R^2; 
-        height = norm(r2-r1);
-        radius = height/4;
-        Amp = sqrt(1/4*pi*radius^4*height^2/(radius^2*(sin(Theta))^2+1/4*height^2*(cos(Theta))^2));
+        joint1(1:3) = keypointsNew(nf,connection(jj,1),1:3);
+        joint2(1:3) = keypointsNew(nf,connection(jj,2),1:3);
+        % origin of constructed ellipsoid
+        mid = 0.5*(joint1+joint2);
+        R_Tx = norm(mid-Tx_pos);
+        R_Rx = norm(mid-Rx_pos);
+        % aspect vector
+        aspect = joint1 - joint2;
+        % semi-axis length
+        a = norm(aspect)/2;
+        b = norm(aspect)/2;
+        c = norm(aspect);
+        % Calculate theta
+        Cos_Theta_i = dot(Tx_pos-mid,aspect)/norm(mid-Tx_pos)/norm(aspect);
+        Theta_i = acos(Cos_Theta_i);
+        Cos_Theta_s = dot(Rx_pos-mid,aspect)/norm(mid-Rx_pos)/norm(aspect);
+        Theta_s = acos(Cos_Theta_s);
+        % Calculate phi
+        Sin_Phi_i = (Tx_pos(2) - mid(2))/sqrt((Tx_pos(1)-mid(1))^2+(Tx_pos(2)-mid(2))^2);
+        Phi_i = asin(Sin_Phi_i);
+        Sin_Phi_s = (Rx_pos(2) - mid(2))/sqrt((Rx_pos(1)-mid(1))^2+(Rx_pos(2)-mid(2))^2);
+        Phi_s = asin(Sin_Phi_s);
+        % rcsellipsoid/R^2 is based on monostatic radar range equation
+        Amp = rcsellipsoid(a,b,c,Phi_i,Theta_i,Phi_s,Theta_s)/R_Rx/R_Tx;
+        Phase = exp(-1i*4*pi*(R_Tx+R_Rx)/lambda); 
         rcs_joint = Amp*Phase;
         rcs = rcs + rcs_joint;
     end
