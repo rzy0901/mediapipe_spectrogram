@@ -73,14 +73,16 @@ def video2keypoints(input_path, output_path="./data", display_captured=False, lo
             param[0]['joint'] = filter(param[0]['joint'])
         # Display keypoint
         annoated_img = img.copy()
+        disp.draw2d(annoated_img, param)
         if display_captured:
-            cv2.imshow('img 2D', disp.draw2d(annoated_img, param))
+            cv2.imshow('img 2D',annoated_img)
             # Display 3D
             disp.draw3d(param, annoated_img)
             disp.vis.update_geometry(None)
             disp.vis.poll_events()
             disp.vis.update_renderer()
         if count < Nframes:
+            annoated_img = cv2.flip(annoated_img, 1)
             out.write(annoated_img)
             keypoints.append(param[0]['joint'].copy())
             handworld_keypoints.append(param[0]['handworld_joint'].copy())
