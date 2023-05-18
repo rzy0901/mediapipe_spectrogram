@@ -24,6 +24,7 @@ def video2keypoints(input_path, output_path="./data", display_captured=False, lo
     print("Video property: fps=", fps_video, "Nframes=", Nframes,"frame_width=", frame_width, "frame_height=", frame_height)
     timestampList = []
     keypoints = []
+    handworld_keypoints = []
     transformations = []
     intrin = {
     # Approx 0.7w < f < w https://www.learnopencv.com/approximate-focal-length-for-webcams-and-cell-phone-cameras/
@@ -64,7 +65,7 @@ def video2keypoints(input_path, output_path="./data", display_captured=False, lo
                 param[0]['joint'] = filter(param[0]['joint'], t = count*1/fps_video)
         elif smoothing == "MovingAverageFilter":
             if count == 0:
-                filter = MovingAverageFilter(window_size=3)
+                filter = MovingAverageFilter(window_size=10)
             param[0]['joint'] = filter(param[0]['joint'])
         elif smoothing == "MovingMedianFilter":
             if count == 0:
@@ -82,11 +83,12 @@ def video2keypoints(input_path, output_path="./data", display_captured=False, lo
         if count < Nframes:
             out.write(annoated_img)
             keypoints.append(param[0]['joint'].copy())
+            handworld_keypoints.append(param[0]['handworld_joint'].copy())
             transformations.append(param[0]['transformation'].copy())
             # timestampList.append(cap.get(cv2.CAP_PROP_POS_MSEC))
             timestampList.append(count*1000/fps_video)  # in milliseconds
             if count == Nframes-1:
-                savemat(output_path+".mat", {'fps': fps_video, 'timestampList': timestampList,'keypoints': keypoints, 'transformations': transformations})
+                savemat(output_path+".mat", {'fps': fps_video, 'timestampList': timestampList,'keypoints': keypoints,'handword_keypoints':handworld_keypoints, 'transformations': transformations})
                 print("mat saved!")
                 if loop == False:
                     break

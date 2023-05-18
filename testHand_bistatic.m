@@ -1,5 +1,6 @@
-clear; clc; close all;
-load('./output/push_pull.mat');
+clear; clc; 
+% close all;
+load('./output/push_pull_1.mat');
 Njoints = size(keypoints,2);
 Nframes = length(timestampList);
 frameLength = 1/28.5; % fps =  28.5;
@@ -11,7 +12,7 @@ HAND_RING_FINGER_CONNECTIONS = [14 15; 15 16; 16 17];
 HAND_PINKY_FINGER_CONNECTIONS = [18 19; 19 20; 20 21];
 connection = [HAND_PALM_CONNECTIONS; HAND_THUMB_CONNECTIONS; HAND_INDEX_FINGER_CONNECTIONS; HAND_MIDDLE_FINGER_CONNECTIONS; HAND_RING_FINGER_CONNECTIONS; HAND_PINKY_FINGER_CONNECTIONS];
 T = frameLength*Nframes;
-Tx_pos = [0 -0.1 -0.2]; % XYZ
+Tx_pos = [0 -0.1 -1.5]; % XYZ
 Rx_pos = [0 -0.1 0]; % XYZ
 drawScenario = true;
 %% plot
@@ -24,7 +25,7 @@ if drawScenario == true
         y = squeeze(keypoints(ii,:,2));
         z = squeeze(keypoints(ii,:,3));
         % plot
-        hand = plot3(z,x,y,'.','markersize', 30,'Color',"blue");
+        hand = plot3(z,x,y,'.','markersize', 13,'Color',"blue");
         hold on;
         axis equal;
         xmin = min([0 Tx_pos(1) Rx_pos(1) min(keypoints(:,:,1),[],'all')]);
@@ -39,9 +40,9 @@ if drawScenario == true
 %         view(30,30)
 %         view(2)
 %         view(30,5)
-        camera = scatter3(0,0,0,200,"red",'o');
-        tx = scatter3(Tx_pos(3),Tx_pos(1),Tx_pos(2),200,"magenta",'*');
-        rx = scatter3(Rx_pos(3),Rx_pos(1),Rx_pos(2),200,"black",'*');
+        camera = scatter3(0,0,0,100,"red",'o');
+        tx = scatter3(Tx_pos(3),Tx_pos(1),Tx_pos(2),100,"magenta",'*');
+        rx = scatter3(Rx_pos(3),Rx_pos(1),Rx_pos(2),100,"black",'*');
         for jj = 1:1:size(connection,1)
             plot3(z(connection(jj,:)),x(connection(jj,:)),y(connection(jj,:)),'Color','b','LineWidth',0.05);
         end
@@ -56,8 +57,8 @@ if drawScenario == true
         xlabel('Z(m)'); ylabel('X(m)'); zlabel('Y(m)'); title(sprintf('Timestamp: %f (ms)',timestampList(ii)));
         grid on;
         legend([camera tx rx hand] ,'camera','transmitter','receiver','hand');
-        set(gcf,'units','normalized','outerposition',[0 0 1 1]);
         set(gca,'ZDir','reverse'); %Y
+%         set(gcf,'units','normalized','outerposition',[0 0 1 1]);
         drawnow;
         Frame=getframe(gcf);
         Image=frame2im(Frame);
@@ -71,7 +72,7 @@ if drawScenario == true
 end
 %% Spectrogram
 % Interpolation of the data:
-fs = 1500; % new frame rate
+fs = 3000; % new frame rate
 TimeSamples = linspace(0,T,Nframes);
 NframesNew = round(T*fs); % Number of frame after interpolation
 TimeSamplesNew = linspace(0,T,NframesNew);
@@ -120,14 +121,34 @@ for nf = 1:NframesNew
     end
     RCS(nf) = rcs;
 end
+RCS = RCS + 0.02+0.015*randn(size(RCS));
 
-% micro-Doppler signature
-% 1/fs*v < c/fc; fs>fc/c*v
+% % micro-Doppler signature
+% % 1/fs*v < c/fc; fs>fc/c*v
+% F = fs;
+% figure;% figure('Position',[500 200 900 600])
+% colormap(jet)
+% spectrogram(RCS,kaiser(256,15),250,512,F,'centered','yaxis');
+% clim = get(gca,'CLim');
+% set(gca,'CLim',clim(2) + [-60 0]);
+% title('Micro-Doppler Signature', 'Fontsize',12,'color','k')
+% drawnow
+
+figure;
 F = fs;
-figure;% figure('Position',[500 200 900 600])
-colormap(jet)
-spectrogram(RCS,kaiser(256,15),250,512,F,'centered','yaxis');
-clim = get(gca,'CLim');
-set(gca,'CLim',clim(2) + [-60 0]);
-title('Micro-Doppler Signature', 'Fontsize',12,'color','k')
-drawnow
+thres_A_TRD = -30;
+[s,f,t] = spectrogram(RCS,kaiser(256,15),250,512,F,'centered','yaxis');
+s = s/max(abs(s),[],'all');
+s = mag2db(abs(s));
+imagesc(t, f, s);
+xlabel('Time (s)')
+ylabel('Doppler frequency (Hz)')
+ylim([-800 800]);
+axis xy; % 设置坐标轴方向，使频率轴朝上
+colormap jet; 
+colorbar;
+caxis([thres_A_TRD,0]);
+
+
+
+

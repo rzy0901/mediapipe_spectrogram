@@ -1,5 +1,5 @@
 clear all;
-close all;
+% close all;
 clc;
 f_s = 10e6;
 CIT = 0.1;
@@ -11,7 +11,7 @@ step_dop = 1/CIT;
 array_Doppler_frequency = [-max_dop:step_dop:max_dop];
 % t_axis = 0:1/f_s:(CIT*f_s-1)/f_s;
 %时间刻度
-filename = 'ok_1.dat';
+filename = 'push_pull_1.dat';
 fullfilename = sprintf('%s/%s','/home/rzy/Documents/data_lc',filename);
 picfoldname = '/home/rzy/Documents/data_lc/pic/';
 figname = split(filename,'.');
@@ -68,8 +68,8 @@ for idx_start_time = 1:length(array_start_time)-1
 if mod(idx_start_time,50) == 1
     fprintf("idx_start_time: %d / %d\n",idx_start_time,length(array_start_time)-1);
 end
-temp_ref = data_cor(1,(round(array_start_time(idx_start_time)*f_s+1)):(round(array_start_time(idx_start_time)*f_s)+round(CIT*f_s)));
-temp_tar = data_cor(2,(round(array_start_time(idx_start_time)*f_s+1)):(round(array_start_time(idx_start_time)*f_s)+round(CIT*f_s)));
+temp_ref = data_cor(2,(round(array_start_time(idx_start_time)*f_s+1)):(round(array_start_time(idx_start_time)*f_s)+round(CIT*f_s)));
+temp_tar = data_cor(1,(round(array_start_time(idx_start_time)*f_s+1)):(round(array_start_time(idx_start_time)*f_s)+round(CIT*f_s)));
 % temp = zeros(1,length(array_Doppler_frequency));
 %% fft
 temp = fftshift(fft(temp_tar.*conj(temp_ref),num_sample));
@@ -79,19 +79,21 @@ toc
 % fprintf('time cost : %d \n',round(cputime - st));
 %% Plot TD figure
 thres_A_TRD = -30;
-fig1 = figure(1);
-set(fig1,'position',[50,50,900,600]);
+fig1 = figure();
+% set(fig1,'position',[50,50,900,600]);
 plot_A_DT = abs(A_TD');
 plot_A_DT = mag2db(plot_A_DT/max(max(plot_A_DT)));
 h = imagesc(array_start_time,array_Doppler_frequency,plot_A_DT);
 xlim([array_start_time(1),array_start_time(end)]);
 ylim([array_Doppler_frequency(1),array_Doppler_frequency(end)]);
-set(gcf,'unit','centimeters','position',[5 3 30 15]);
+% set(gcf,'unit','centimeters','position',[5 3 30 15]);
 set(get(gca,'XLabel'),'FontSize',22);
 set(get(gca,'YLabel'),'FontSize',22);
 colorbar;
 xlabel('Time (s)')
 ylabel('Doppler frequency (Hz)')
+ylim([-800 800]);
+axis xy;
 colormap('jet');
 caxis([thres_A_TRD,0]);
 if pic_save == 1
