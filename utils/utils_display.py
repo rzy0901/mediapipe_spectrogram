@@ -128,8 +128,8 @@ class DisplayHand:
                 x = int(p['keypt'][0,0]) - 30
                 y = int(p['keypt'][0,1]) + 40
                 # cv2.putText(img, '%s %.3f' % (p['class'], p['score']), (x, y), 
-                cv2.putText(img, '%s' % (p['class']), (x, y), 
-                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2) # Red
+                # cv2.putText(img, '%s' % (p['class']), (x, y), 
+                #     cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2) # Red
                 
                 # Loop through keypoint for each hand
                 for i in range(21):
@@ -161,17 +161,17 @@ class DisplayHand:
                         # cv2.FONT_HERSHEY_SIMPLEX, 2, 2)[0]
                         cv2.FONT_HERSHEY_SIMPLEX, 1, 2)[0]
                     x = int((img_width-size[0]) / 2)
-                    cv2.putText(img, p['gesture'].upper(),
-                        # (x, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, (0,0,255), 2)
-                        (x, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
+                    # cv2.putText(img, p['gesture'].upper(),
+                    #     # (x, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, (0,0,255), 2)
+                    #     (x, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
 
                     # Label joint angle
                     self.draw_joint_angle(img, p)
 
-            # Label fps
-            if p['fps']>0:
-                cv2.putText(img, 'FPS: %.1f' % (p['fps']),
-                    (0, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)   
+            # # Label fps
+            # if p['fps']>0:
+            #     cv2.putText(img, 'FPS: %.1f' % (p['fps']),
+            #         (0, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)   
 
         return img
 
@@ -191,8 +191,8 @@ class DisplayHand:
                 x = int(p['keypt'][0,0]) - 30
                 y = int(p['keypt'][0,1]) + 40
                 # Label left or right hand
-                cv2.putText(img, '%s %.3f' % (p['class'], p['score']), (x, y), 
-                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2) # Red
+                # cv2.putText(img, '%s %.3f' % (p['class'], p['score']), (x, y), 
+                #     cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2) # Red
 
                 min_depth = min(p['joint'][:,2])
                 max_depth = max(p['joint'][:,2])
@@ -219,9 +219,9 @@ class DisplayHand:
                         cv2.circle(img, (x, y), size, color, size)
             
             # Label fps
-            if p['fps']>0:
-                cv2.putText(img, 'FPS: %.1f' % (p['fps']),
-                    (0, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)                           
+            # if p['fps']>0:
+            #     cv2.putText(img, 'FPS: %.1f' % (p['fps']),
+            #         (0, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)                           
 
         return img
 
