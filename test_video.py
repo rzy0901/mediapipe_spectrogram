@@ -2,12 +2,12 @@ import os
 from tqdm import tqdm, trange
 from utils.video2keypoints import video2keypoints
 
-def test(input_dir,output_dir):
+def test(input_dir,output_dir,static_hand = True):
     obj = os.scandir(input_dir)
     for entry in tqdm(list(obj),desc=input_dir):
         if entry.is_file() and entry.name.endswith('.mp4'):
             name = entry.name.split('.')[0]
-            if name.startswith('push_pull'):
+            if name.startswith('push_pull') or static_hand == False:
                 video2keypoints(input_path= os.path.join(input_dir,name+'.mp4'),
                                 output_path= os.path.join(output_dir,name),
                                 display_captured=False,
@@ -53,6 +53,6 @@ if __name__ == "__main__":
     # test('/home/rzy/Documents/data_lc','./output/')
     # test2()
     # video2keypoints(input_path=0,display_captured=True,static_hand=False,smoothing="OneEuroFilter") # webcam visualization
-    test('/media/rzy/76800D98800D5FCB/Codes/record/push_pull','./data/keypoints/push_pull/')
+    test('/media/rzy/76800D98800D5FCB/Codes/record/push_pull','./data/keypoints/push_pull/',static_hand=False)
     test('/media/rzy/76800D98800D5FCB/Codes/record/beckoned','./data/keypoints/beckoned/')
     test('/media/rzy/76800D98800D5FCB/Codes/record/rub_finger','./data/keypoints/rub_finger/')
