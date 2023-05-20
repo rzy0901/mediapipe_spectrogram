@@ -50,6 +50,9 @@ def test2():
                     )
 
 if __name__ == "__main__":
-    test('/home/rzy/Documents/data_lc','./output/')
-    test2()
-    # video2keypoints(input_path=0,display_captured=True,static_hand=False,smoothing="") # webcam visualization
+    # test('/home/rzy/Documents/data_lc','./output/')
+    # test2()
+    # video2keypoints(input_path=0,display_captured=True,static_hand=False,smoothing="OneEuroFilter") # webcam visualization
+    test('/media/rzy/76800D98800D5FCB/Codes/record/push_pull','./data/keypoints/push_pull/')
+    test('/media/rzy/76800D98800D5FCB/Codes/record/beckoned','./data/keypoints/beckoned/')
+    test('/media/rzy/76800D98800D5FCB/Codes/record/rub_finger','./data/keypoints/rub_finger/')
