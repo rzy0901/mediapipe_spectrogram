@@ -12,8 +12,8 @@ array_Doppler_frequency = [-max_dop:step_dop:max_dop];
 % t_axis = 0:1/f_s:(CIT*f_s-1)/f_s;
 %时间刻度
 filename = 'push_pull_1.dat';
-fullfilename = sprintf('%s/%s','/home/rzy/Documents/data_lc',filename);
-picfoldname = '/home/rzy/Documents/data_lc/pic/';
+fullfilename = sprintf('%s/%s','D:/Codes/data_lc',filename);
+picfoldname = './pic/';
 figname = split(filename,'.');
 figname = sprintf('%s%s.png',picfoldname,figname{1,1});
 pic_save = 0;
@@ -78,7 +78,7 @@ end
 toc
 % fprintf('time cost : %d \n',round(cputime - st));
 %% Plot TD figure
-thres_A_TRD = -30;
+thres_A_TRD = -25;
 fig1 = figure();
 % set(fig1,'position',[50,50,900,600]);
 plot_A_DT = abs(A_TD');
@@ -92,7 +92,7 @@ set(get(gca,'YLabel'),'FontSize',22);
 colorbar;
 xlabel('Time (s)')
 ylabel('Doppler frequency (Hz)')
-ylim([-800 800]);
+ylim([-600 600]);
 axis xy;
 colormap('jet');
 caxis([thres_A_TRD,0]);

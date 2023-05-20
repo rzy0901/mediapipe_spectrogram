@@ -1,9 +1,9 @@
 clear; clc; 
-% close all;
+close all;
 load('./output/push_pull_1.mat');
 Njoints = size(keypoints,2);
 Nframes = length(timestampList);
-frameLength = 1/28.5; % fps =  28.5;
+frameLength = 1/fps;
 HAND_PALM_CONNECTIONS = [1 2; 1, 6; 10 14; 14 18; 6 10; 1 18];
 HAND_THUMB_CONNECTIONS = [2 3; 3 4; 4 5];
 HAND_INDEX_FINGER_CONNECTIONS = [6 7; 7 8; 8 9];
@@ -14,7 +14,7 @@ connection = [HAND_PALM_CONNECTIONS; HAND_THUMB_CONNECTIONS; HAND_INDEX_FINGER_C
 T = frameLength*Nframes;
 Tx_pos = [0 -0.1 -1.5]; % XYZ
 Rx_pos = [0 -0.1 0]; % XYZ
-drawScenario = true;
+drawScenario = false;
 %% plot
 if drawScenario == true
     hf = figure;
@@ -136,19 +136,31 @@ RCS = RCS + 0.02+0.015*randn(size(RCS));
 
 figure;
 F = fs;
-thres_A_TRD = -30;
+thres_A_TRD = -25;
 [s,f,t] = spectrogram(RCS,kaiser(256,15),250,512,F,'centered','yaxis');
 s = s/max(abs(s),[],'all');
 s = mag2db(abs(s));
-imagesc(t, f, s);
+h = imagesc(t, f, s);
 xlabel('Time (s)')
 ylabel('Doppler frequency (Hz)')
-ylim([-800 800]);
+ylim([-600 600]);
 axis xy; % 设置坐标轴方向，使频率轴朝上
 colormap jet; 
 colorbar;
 caxis([thres_A_TRD,0]);
+tightfig;
 
-
-
+%% Remove lim
+fig = figure;
+ax = axes;
+new_handle = copyobj(h,ax);
+ylim([-600 600]);
+xlim([t(1) t(end)]);
+colormap jet; 
+caxis([thres_A_TRD,0]);
+axis off 
+set(gca,'xtick',[],'ytick',[],'xcolor','w','ycolor','w')
+set(gca,'looseInset',[0 0 0 0]);
+% name = 'test';
+% saveas(gcf,sprintf('%s.jpg',name))
 
