@@ -1,5 +1,5 @@
 clear; clc; close all;
-load('./output/push_pull.mat');
+load('./output2/push_pull.mat');
 Njoints = size(keypoints,2);
 Nframes = length(timestampList);
 frameLength = 1/28.5; % fps =  28.5;
@@ -9,7 +9,7 @@ HAND_INDEX_FINGER_CONNECTIONS = [6 7; 7 8; 8 9];
 HAND_MIDDLE_FINGER_CONNECTIONS = [10 11; 11 12; 12, 13];
 HAND_RING_FINGER_CONNECTIONS = [14 15; 15 16; 16 17];
 HAND_PINKY_FINGER_CONNECTIONS = [18 19; 19 20; 20 21];
-connection = [HAND_PALM_CONNECTIONS; HAND_THUMB_CONNECTIONS; HAND_INDEX_FINGER_CONNECTIONS; HAND_MIDDLE_FINGER_CONNECTIONS; HAND_RING_FINGER_CONNECTIONS; HAND_PINKY_FINGER_CONNECTIONS];
+connections = [HAND_PALM_CONNECTIONS; HAND_THUMB_CONNECTIONS; HAND_INDEX_FINGER_CONNECTIONS; HAND_MIDDLE_FINGER_CONNECTIONS; HAND_RING_FINGER_CONNECTIONS; HAND_PINKY_FINGER_CONNECTIONS];
 T = frameLength*Nframes;
 Radar_pos = [0 0 0]; % XYZ
 drawScenario = true;
@@ -40,14 +40,27 @@ if drawScenario == true
 %         view(30,5)
         camera = scatter3(0,0,0,200,"red",'o','DisplayName','Camera');
         radar = scatter3(Radar_pos(3),Radar_pos(1),Radar_pos(2),200,"black",'*','DisplayName','Radar');
-        for jj = 1:1:size(connection,1)
-            plot3(z(connection(jj,:)),x(connection(jj,:)),y(connection(jj,:)),'Color','b','LineWidth',0.05);
+        for jj = 1:1:size(connections,1)
+            plot3(z(connections(jj,:)),x(connections(jj,:)),y(connections(jj,:)),'Color','b','LineWidth',0.05);
         end
-        for nj=1:Njoints        
-            line([Radar_pos(3) z(nj)],[Radar_pos(1) x(nj)],...
-                           [Radar_pos(2) y(nj)],'LineStyle',':',...
-                           'color',[0.5 0.5 0.5],'LineWidth',0.05)
-        end    
+        for jj = 1:1:size(connections,1)
+            joint1(1:3) = keypoints(ii,connections(jj,1),1:3);
+            joint2(1:3) = keypoints(ii,connections(jj,2),1:3);
+            mid = 0.5*(joint1+joint2);
+%             line([Radar_pos(3) mid(3)],[Radar_pos(1) mid(1)],...
+%                 [Radar_pos(2) mid(2)],'LineStyle',':',...
+%                 'color',[0.5 0.5 0.5],'LineWidth',0.05)
+            line([Radar_pos(3) mid(3)],[Radar_pos(1) mid(1)],...
+                [Radar_pos(2) mid(2)],'LineStyle',':',...
+                'color',[0.5 0.5 0.5],'LineWidth',1)
+            aspect = joint1 - joint2;
+            a = norm(aspect)/4;
+            b = norm(aspect)/4;
+            c = norm(aspect)/2;
+            [X,Y,Z] = ellipsoid2P(joint1,joint2,a,b,c,100);
+            surf(Z,X,Y);
+        end
+
         xlabel('Z(m)'); ylabel('X(m)'); zlabel('Y(m)'); title(sprintf('Timestamp: %f (ms)',timestampList(ii)));
         grid on;
         legend([camera radar hand] ,'camera','radar','hand');
@@ -84,18 +97,18 @@ fc = 60.48e9; % carrier frequency
 lambda = c/fc; %(m) wavelength
 for nf = 1:NframesNew
     rcs = 0;
-    for jj = 1:1:size(connection,1)
-        joint1(1:3) = keypointsNew(nf,connection(jj,1),1:3);
-        joint2(1:3) = keypointsNew(nf,connection(jj,2),1:3);
+    for jj = 1:1:size(connections,1)
+        joint1(1:3) = keypointsNew(nf,connections(jj,1),1:3);
+        joint2(1:3) = keypointsNew(nf,connections(jj,2),1:3);
         % origin of constructed ellipsoid
         mid = 0.5*(joint1+joint2);
         R = norm(mid-Radar_pos);
         % aspect vector
         aspect = joint1 - joint2;
         % semi-axis length
-        a = norm(aspect)/2;
-        b = norm(aspect)/2;
-        c = norm(aspect);
+        a = norm(aspect)/4;
+        b = norm(aspect)/4;
+        c = norm(aspect)/2;
         % Calculate theta
         Cos_Theta = dot(Radar_pos-mid,aspect)/norm(mid-Radar_pos)/norm(aspect);
         Theta = acos(Cos_Theta);

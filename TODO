@@ -1,7 +1,0 @@
-撰写录制工具
-实时低通滤波器
-修改one-euro
-kalman滤波
-对transformation矩阵做平滑
-添加人体部分躯干（holistic，或者pose，只截取一部分手臂）
-minimal hand测试

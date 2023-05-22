@@ -1,4 +1,5 @@
 function rcs = rcsellipsoid(a,b,c,phi_i,theta_i,phi_s,theta_s)
+% Modified from "Chen, Victor C. The micro-Doppler effect in radar. Artech house, 2019."
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This program calculates the bistatic (or monostatic) RCS of an ellipsoid
 % with semi-axis lengths of a, b, and c.
