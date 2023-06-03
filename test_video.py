@@ -22,7 +22,7 @@ def test2():
                     display_captured=False,
                     loop=False,
                     static_hand=False,
-                    smoothing="OneEuroFilter",
+                    smoothing="MovingAverageFilter",
                     )
     video2keypoints(input_path="./videos/2.mp4",
                     output_path="./output2/beckoned",
@@ -43,6 +43,32 @@ if __name__ == "__main__":
 
     # test2()
     # video2keypoints(input_path=0,display_captured=True,static_hand=False,smoothing="") # webcam visualization
-    test('/media/rzy/76800D98800D5FCB/Codes/record/push_pull','./data/keypoints/push_pull/',static_hand=False, smoothing="MovingAverageFilter")
-    test('/media/rzy/76800D98800D5FCB/Codes/record/beckoned','./data/keypoints/beckoned/')
+
+
+    # test('/media/rzy/76800D98800D5FCB/Codes/record/push_pull','./data/keypoints/push_pull/',static_hand=False, smoothing="MovingAverageFilter")
+    # # for filename in os.listdir('./data/keypoints/beckoned/'):
+    # #     file_path = os.path.join('./data/keypoints/beckoned/', filename)
+    # #     if os.path.isfile(file_path):
+    # #         os.remove(file_path)
+    # test('/media/rzy/76800D98800D5FCB/Codes/record/beckoned','./data/keypoints/beckoned/')
     test('/media/rzy/76800D98800D5FCB/Codes/record/rub_finger','./data/keypoints/rub_finger/')
+
+
+    # for filename in os.listdir('./data/keypoints/test/'):
+    #     file_path = os.path.join('./data/keypoints/test/', filename)
+    #     if os.path.isfile(file_path):
+    #         os.remove(file_path)
+    # test('/media/rzy/76800D98800D5FCB/Codes/record/test','./data/keypoints/test/')
+
+
+    # video2keypoints(input_path="./videos/媒体2.mp4",
+    #                 output_path="./data",
+    #                 display_captured=True,
+    #                 loop=True,
+    #                 static_hand=False,
+    #                 smoothing="OneEuroFilter",
+    #                 )
+    # test('/media/rzy/76800D98800D5FCB/Codes/record/test','./test/')
+    # test('/media/rzy/76800D98800D5FCB/Codes/record/test2','./test2/')
+
+

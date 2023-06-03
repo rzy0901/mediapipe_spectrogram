@@ -21,7 +21,7 @@ intrin_default = {
 
 
 class MediaPipeHand:
-    def __init__(self, static_image_mode=True, max_num_hands=1,
+    def __init__(self, static_image_mode=True, max_num_hands=2,
         model_complexity=1, intrin=None):
         self.max_num_hands = max_num_hands
         if intrin is None:
