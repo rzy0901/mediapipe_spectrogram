@@ -25,13 +25,19 @@ for ii = 1
     x = squeeze(keypoints(ii,:,1));
     y = squeeze(keypoints(ii,:,2));
     z = squeeze(keypoints(ii,:,3));
-    hand = plot3(z,x,y,'.','markersize', 20,'Color',"b");
+    if rcsRenderinng == true
+            hand = plot3(z,x,y,'.','markersize', 20,'Color',"k");
+    else
+            hand = plot3(z,x,y,'.','markersize', 20,'Color',"b");
+    end
     hold on;
     if drawCamera == true
         camera = scatter3(0,0,0,100,"red",'o');
     end
-    for jj = 1:1:size(connections,1)
-        plot3(z(connections(jj,:)),x(connections(jj,:)),y(connections(jj,:)),'Color','b','LineWidth',0.5);
+    if rcsRenderinng == false
+        for jj = 1:1:size(connections,1)
+            plot3(z(connections(jj,:)),x(connections(jj,:)),y(connections(jj,:)),'Color','b','LineWidth',0.5);
+        end
     end
     for jj = 1:1:size(connections)
         joint1(1:3) = keypoints(ii,connections(jj,1),1:3);

@@ -10,7 +10,7 @@ connections = [HAND_PALM_CONNECTIONS; HAND_FINGER_CONNECTIONS];
 
 
 % names = ["push_pull","beckoned","rub_finger"];
-names = ["beckoned";];
+names = ["rub_finger";];
 for n = 1:1:length(names)
     name = names(n);
 %     if name == "rub_finger" || name == "test"
@@ -35,33 +35,35 @@ for n = 1:1:length(names)
 %     AWGN_var = 0.0001;
 %     using_camera_coordinate = true;
  
-    % Beckoned
-    Tx_pos = [0 -0.1 -1.5]; % XYZ
-    Rx_pos = [0 -0.1 -0.1]; % XYZ
-    AWGN_mean = 0.001;
-    AWGN_var = 0.0001;
-    using_camera_coordinate = false;
-
-%     % Rub_finger
-%     Tx_pos = [0.2 0 0.]; % XYZ
-%     Rx_pos = [0.2 0 0]; % XYZ
+%     % Beckoned
+%     Tx_pos = [0 -0.1 -1.5]; % XYZ
+%     Rx_pos = [0 -0.1 -0.1]; % XYZ
 %     AWGN_mean = 0.001;
 %     AWGN_var = 0.0001;
 %     using_camera_coordinate = true;
 
+    % Rub_finger
+    Tx_pos = [0.2 -0.05 -1.5]; % XYZ
+    Rx_pos = [0.2 -0 0.1]; % XYZ
+%     Tx_pos = [0.2 0 0]; % XYZ
+%     Rx_pos = [0.2 0 0]; % XYZ
+    AWGN_mean = 0.001;
+    AWGN_var = 0.0001;
+    using_camera_coordinate = true;
+
     fc = 60.48e9;
     fs = 2000;
-    drawScenario = false;
-    rcsRendering = false;
+    drawScenario = true;
+    rcsRendering = true;
     thres_A_TRD = -30;
-    pic_save = true;
+    pic_save = false;
 
     %%%%%%%%%%%%%%%%%%%%%
 
 
 
     mat_files = dir(fullfile(input_mat_dir,"*.mat"));
-    for ii = 1:1:length(mat_files)
+    for ii = 2:1:length(mat_files)
         fprintf("%s: %ds/%d.\n",name,ii,length(mat_files));
         fprintf("Using %s.\n",mat_files(ii).name);
         [~,base,~]= fileparts(mat_files(ii).name);

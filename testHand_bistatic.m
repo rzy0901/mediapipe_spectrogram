@@ -1,15 +1,15 @@
 clear; clc;
-Tx_pos = [0 -0.1 -1.5]; % XYZ
-Rx_pos = [0 -0.1 0.1]; % XYZ
+Tx_pos = [0.4 -0.1 -1]; % XYZ
+Rx_pos = [0.4 -0.1 0.1]; % XYZ
 fc = 60.48e9;
 fs = 2000;
 % AWGN_mean = 0.005;
 % AWGN_var = 0.001;
 AWGN_mean = 0.05;
 AWGN_var = 0.0001;
-thres_A_TRD = -25;
-drawScenario = false;
-rcsRendering = false;
+thres_A_TRD = -30;
+drawScenario = true;
+rcsRendering = true;
 using_camera_coordinate = true;
 
 
@@ -23,13 +23,22 @@ HAND_FINGER_CONNECTIONS = [HAND_THUMB_CONNECTIONS; HAND_INDEX_FINGER_CONNECTIONS
 connections = [HAND_PALM_CONNECTIONS; HAND_FINGER_CONNECTIONS];
 
 close all;
-name = 'push_pull_1';
+name = 'rub_finger';
 input_mat_path = sprintf('./output/%s.mat',name);
 output_jpg_path = sprintf('./output/%s.jpg',name);
 output_gif_path = sprintf('./output/%s.gif',name);
 simuSpectrogram(Tx_pos,Rx_pos,fc,fs,AWGN_mean,AWGN_var,thres_A_TRD, ...
     drawScenario,rcsRendering,input_mat_path,using_camera_coordinate, ...
     connections,output_jpg_path,output_gif_path,false);
+
+% close all;
+% name = '2';
+% input_mat_path = sprintf('./data/keypoints/rub_finger/%s.mat',name);
+% output_jpg_path = sprintf('./lgl/%s.jpg',name);
+% output_gif_path = sprintf('./lgl/%s.gif',name);
+% simuSpectrogram_v2(Tx_pos,Rx_pos,fc,fs,AWGN_mean,AWGN_var,thres_A_TRD, ...
+%     drawScenario,rcsRendering,input_mat_path,using_camera_coordinate, ...
+%     connections,output_jpg_path,output_gif_path,true);
 
 % % close all;
 % simuSpectrogram(Tx_pos,Rx_pos,fc,fs,0,0,-30,true,false,"./data.mat",using_camera_coordinate,connections,"","",false);

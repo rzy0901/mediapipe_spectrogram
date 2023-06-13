@@ -1,5 +1,6 @@
 function simuSpectrogram(Tx_pos,Rx_pos,fc,fs,AWGN_mean,AWGN_var,thres_A_TRD, ...
-    drawScenario,rcsRenderinng,input_mat_path,using_camera_coordinate,connections,output_jpg_path,output_gif_path,pic_save)
+    drawScenario,rcsRenderinng,input_mat_path,using_camera_coordinate,connections, ...
+    output_jpg_path,output_gif_path,pic_save)
 % This codes could simulate spectrogram of a 21 keypoint hand using primitive based method.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Input:
@@ -89,7 +90,6 @@ if drawScenario == true
         xlim([zmin zmax]); % Z
         ylim([xmin xmax]); % X
         zlim([ymin ymax]); % Y
-        view(-70,10)
         %         view(30,30)
         %         view(2)
         %         view(30,5)
@@ -100,9 +100,11 @@ if drawScenario == true
         end
         tx = scatter3(Tx_pos(3),Tx_pos(1),Tx_pos(2),100,"magenta",'*');
         rx = scatter3(Rx_pos(3),Rx_pos(1),Rx_pos(2),100,"black",'*');
-        for jj = 1:1:size(connections,1)
-            %             plot3(z(connections(jj,:)),x(connections(jj,:)),y(connections(jj,:)),'Color','b','LineWidth',0.05);
-            plot3(z(connections(jj,:)),x(connections(jj,:)),y(connections(jj,:)),'Color','b','LineWidth',0.5);
+        if rcsRenderinng == false
+            for jj = 1:1:size(connections,1)
+                %             plot3(z(connections(jj,:)),x(connections(jj,:)),y(connections(jj,:)),'Color','b','LineWidth',0.05);
+                plot3(z(connections(jj,:)),x(connections(jj,:)),y(connections(jj,:)),'Color','b','LineWidth',0.5);
+            end
         end
         for jj = 1:1:size(connections)
             joint1(1:3) = keypoints(ii,connections(jj,1),1:3);
