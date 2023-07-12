@@ -117,6 +117,22 @@ class DisplayHand:
                 # Reset camera view
                 self.camera.reset_view()
 
+    # Default 2d plot in mediapipe
+    def draw2d_default(self,img,param):
+        from mediapipe.python.solutions.hands_connections import HAND_CONNECTIONS
+        from mediapipe import solutions
+        from mediapipe.framework.formats import landmark_pb2
+        img_height, img_width, _ = img.shape
+        for p in param:
+            if p['class'] is not None:
+                hand_landmarks_proto = landmark_pb2.NormalizedLandmarkList()
+                hand_landmarks_proto.landmark.extend([landmark_pb2.NormalizedLandmark(x=landmark[0], y=landmark[1], z=landmark[2]) for landmark in p['keypt_raw']])
+                solutions.drawing_utils.draw_landmarks(
+                    img,
+                    hand_landmarks_proto,
+                    solutions.hands.HAND_CONNECTIONS,
+                    solutions.drawing_styles.get_default_hand_landmarks_style(),
+                    solutions.drawing_styles.get_default_hand_connections_style())
 
     def draw2d(self, img, param):
         img_height, img_width, _ = img.shape
@@ -125,8 +141,8 @@ class DisplayHand:
         for p in param:
             if p['class'] is not None:
                 # Label left or right hand
-                x = int(p['keypt'][0,0]) - 30
-                y = int(p['keypt'][0,1]) + 40
+                # x = int(p['keypt'][0,0]) - 30
+                # y = int(p['keypt'][0,1]) + 40
                 # cv2.putText(img, '%s %.3f' % (p['class'], p['score']), (x, y), 
                 # cv2.putText(img, '%s' % (p['class']), (x, y), 
                 #     cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2) # Red

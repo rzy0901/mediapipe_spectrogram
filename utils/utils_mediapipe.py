@@ -72,9 +72,10 @@ class MediaPipeHand:
         for i in range(max_num_hands):
             p = {
                 'count'   : -1,               # Frame index of hand, increasing 1 as pipe.forward().
+                'keypt_raw': np.zeros((21,3)), # Raw 2.5D normalized keypt in image coordinate (between 0 and 1)_
                 'keypt'   : np.zeros((21,2)), # 2D keypt in image coordinate (pixel)
                 'joint'   : np.zeros((21,3)), # 3D joint in camera coordinate (m)
-                'handworld_joint': np.zeros((21,3)),
+                'handworld_joint': np.zeros((21,3)), # Raw 3D joint in hand coordinate (m)
                 'class'   : None,             # Left / right / none hand
                 'score'   : 0,                # Probability of predicted handedness (always>0.5, and opposite handedness=1-score)
                 'angle'   : np.zeros(15),     # Flexion joint angles in degree
@@ -115,6 +116,11 @@ class MediaPipeHand:
                 for j, lm in enumerate(res.landmark):
                     self.param[i]['keypt'][j,0] = lm.x * img_width  # Convert normalized coor to pixel [0,1] -> [0,width]
                     self.param[i]['keypt'][j,1] = lm.y * img_height # Convert normalized coor to pixel [0,1] -> [0,height]
+                    
+                    # Raw normalized 2.5d keypoints in image coordinate
+                    self.param[i]['keypt_raw'][j,0] = lm.x
+                    self.param[i]['keypt_raw'][j,1] = lm.y
+                    self.param[i]['keypt_raw'][j,2] = lm.z
 
                     # # Ignore it https://github.com/google/mediapipe/issues/1320
                     # self.param[i]['visible'][j] = lm.visibility

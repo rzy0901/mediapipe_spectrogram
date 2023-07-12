@@ -1,6 +1,6 @@
 import cv2
 
-name = "test"
+name = "push_pull"
 cap = cv2.VideoCapture("{}.mp4".format(name))
 count = 0
 
@@ -17,4 +17,3 @@ while cap.isOpened():
 
 cv2.destroyAllWindows()
 cap.release()
-

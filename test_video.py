@@ -41,10 +41,10 @@ def test2():
 
 if __name__ == "__main__":
 
-    # test2()
+    test2()
 
 
-    video2keypoints(input_path=0,display_captured=True,static_hand=False,smoothing="") # webcam visualization
+    # video2keypoints(input_path=0,display_captured=True,static_hand=False,smoothing="") # webcam visualization
 
 
     # test('/media/rzy/76800D98800D5FCB/Codes/record/push_pull','./data/keypoints/push_pull/',static_hand=False, smoothing="MovingAverageFilter")
@@ -61,15 +61,5 @@ if __name__ == "__main__":
     #     if os.path.isfile(file_path):
     #         os.remove(file_path)
     # test('/media/rzy/76800D98800D5FCB/Codes/record/test','./data/keypoints/test/')
-
-
-    # video2keypoints(input_path="./videos/媒体2.mp4",
-    #                 output_path="./data",
-    #                 display_captured=True,
-    #                 loop=True,
-    #                 static_hand=False,
-    #                 smoothing="OneEuroFilter",
-    #                 )
-
 
 
