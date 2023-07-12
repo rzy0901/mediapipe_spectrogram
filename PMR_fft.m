@@ -11,7 +11,7 @@ step_dop = 1/CIT;
 array_Doppler_frequency = [-max_dop:step_dop:max_dop];
 % t_axis = 0:1/f_s:(CIT*f_s-1)/f_s;
 %时间刻度
-filename = 'push_pull_1.dat';
+filename = 'beckoned_1.dat';
 fullfilename = sprintf('%s/%s','D:/Codes/data_lc',filename);
 % fullfilename = sprintf('%s/%s','/home/rzy/Documents/data_lc',filename);
 picfoldname = './pic/';
@@ -79,7 +79,7 @@ end
 toc
 % fprintf('time cost : %d \n',round(cputime - st));
 %% Plot TD figure
-thres_A_TRD = -25;
+thres_A_TRD = -30;
 fig1 = figure();
 % set(fig1,'position',[50,50,900,600]);
 plot_A_DT = abs(A_TD');
