@@ -73,8 +73,7 @@ def video2keypoints(input_path, output_path="./data", display_captured=False, lo
             param[0]['joint'] = filter(param[0]['joint'])
         # Display keypoint
         annoated_img = img.copy()
-        # disp.draw2d_(annoated_img, param)
-        disp.draw2d(annoated_img, param)
+        # disp.draw2d(annoated_img, param)
         disp.draw2d_default(annoated_img, param)
         if display_captured:
             cv2.imshow('img 2D',annoated_img)
