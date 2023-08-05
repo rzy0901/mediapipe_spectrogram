@@ -194,7 +194,7 @@ for nf = 1:NframesNew
         Phi_s = asin(Sin_Phi_s);
         % rcsellipsoid/R^2 is based on bistatic radar range equation
         Amp = sqrt(rcsellipsoid(a,b,c,Phi_i,Theta_i,Phi_s,Theta_s))/R_Rx/R_Tx;
-        Phase = exp(-1i*2*pi*(R_Tx+R_Rx)/lambda);
+        Phase = exp(-1i*4*pi*(R_Tx+R_Rx)/lambda);
         rcs_joint = Amp*Phase;
         if isnan(rcs_joint)
             rcs_joint = 0;
@@ -218,7 +218,7 @@ clim = get(gca,'CLim');
 % set(gca,'CLim',clim(2) + [thres_A_TRD 0]);
 set(gca,'CLim',clim(2) + [-60 0]);
 title('Micro-Doppler Signature', 'Fontsize',12,'color','k')
-tightfig;
+% tightfig;
 drawnow
 
 %% Normalize
@@ -235,7 +235,7 @@ axis xy; % 设置坐标轴方向，使频率轴朝上
 colormap jet;
 colorbar;
 caxis([thres_A_TRD,0]);
-tightfig;
+% tightfig;
 
 %% Remove lim
 fig = figure;
