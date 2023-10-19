@@ -182,19 +182,27 @@ for nf = 1:NframesNew
         a = norm(aspect)/4;
         b = norm(aspect)/4;
         c = norm(aspect)/2;
+        radius = norm(aspect)/4;
+        len = norm(aspect);
         % Calculate theta
         Cos_Theta_i = dot(Tx_pos-mid,aspect)/norm(mid-Tx_pos)/norm(aspect);
         Theta_i = acos(Cos_Theta_i);
         Cos_Theta_s = dot(Rx_pos-mid,aspect)/norm(mid-Rx_pos)/norm(aspect);
         Theta_s = acos(Cos_Theta_s);
-        % Calculate phi
-        Sin_Phi_i = (Tx_pos(2) - mid(2))/sqrt((Tx_pos(1)-mid(1))^2+(Tx_pos(2)-mid(2))^2);
-        Phi_i = asin(Sin_Phi_i);
-        Sin_Phi_s = (Rx_pos(2) - mid(2))/sqrt((Rx_pos(1)-mid(1))^2+(Rx_pos(2)-mid(2))^2);
-        Phi_s = asin(Sin_Phi_s);
+%         % Calculate phi
+%         Sin_Phi_i = (Tx_pos(2) - mid(2))/sqrt((Tx_pos(1)-mid(1))^2+(Tx_pos(2)-mid(2))^2);
+%         Phi_i = asin(Sin_Phi_i);
+%         Sin_Phi_s = (Rx_pos(2) - mid(2))/sqrt((Rx_pos(1)-mid(1))^2+(Rx_pos(2)-mid(2))^2);
+%         Phi_s = asin(Sin_Phi_s);
+        % Calculate bistatic phi
+        normal_vector = aspect / norm(aspect);
+        Tx_projection = Tx_pos - dot(Tx_pos - mid, normal_vector) * normal_vector;
+        Rx_projection = Rx_pos - dot(Rx_pos - mid, normal_vector) * normal_vector;
+        bistatic_angle_phi = acos(dot(Tx_projection - mid, Rx_projection - mid) / (norm(Tx_projection - mid) * norm(Rx_projection - mid)));
         % rcsellipsoid/R^2 is based on bistatic radar range equation
-        Amp = sqrt(rcsellipsoid(a,b,c,Phi_i,Theta_i,Phi_s,Theta_s))/R_Rx/R_Tx;
-        Phase = exp(-1i*4*pi*(R_Tx+R_Rx)/lambda);
+%         Amp = sqrt(rcsellipsoid(a,b,c,Phi_i,Theta_i,Phi_s,Theta_s))/R_Rx/R_Tx;
+        Amp = brcsellipsoid_circle(len,radius,bistatic_angle_phi,Theta_i,Theta_s)/R_Rx/R_Tx;
+        Phase = exp(-1i*2*pi*(R_Tx+R_Rx)/lambda);
         rcs_joint = Amp*Phase;
         if isnan(rcs_joint)
             rcs_joint = 0;
