@@ -5,12 +5,12 @@ Rx_pos = [0 -0.1 0.1]; % XYZ
 % Rx_pos = [0.4 -0.1 0.1]; % XYZ
 fc = 60.48e9;
 fs = 2000;
-% AWGN_mean = 0.005;
-% AWGN_var = 0.001;
 AWGN_mean = 0.005;
-AWGN_var = 0.0001;
+AWGN_var = 0.001;
+% AWGN_mean = 0.005;
+% AWGN_var = 0.0001;
 thres_A_TRD = -30;
-drawScenario = true;
+drawScenario = false;
 rcsRendering = true;
 using_camera_coordinate = true;
 
@@ -34,7 +34,7 @@ output_gif_path = sprintf('./output2/%s.gif',name);
 %     connections,output_jpg_path,output_gif_path,true);
 simuSpectrogram(Tx_pos,Rx_pos,fc,fs,AWGN_mean,AWGN_var,thres_A_TRD, ...
     drawScenario,rcsRendering,input_mat_path,using_camera_coordinate, ...
-    connections,output_jpg_path,output_gif_path,true);
+    connections,output_jpg_path,output_gif_path,false);
 % simuSpectrogram_v4(Tx_pos,Rx_pos,fc,fs,AWGN_mean,AWGN_var,thres_A_TRD, ...
 %     drawScenario,rcsRendering,input_mat_path,using_camera_coordinate, ...
 %     connections,output_jpg_path,output_gif_path,false);

@@ -115,7 +115,7 @@ if drawScenario == true
                 a = norm(aspect)/4;
                 b = norm(aspect)/4;
                 c = norm(aspect)/2;
-                [X,Y,Z] = ellipsoid2P(joint1,joint2,a,b,c,10);
+                [X,Y,Z] = ellipsoid2P_transformed(joint1,joint2,a,b,c,10);
                 surf(Z,X,Y);
                 colormap white;
             end
@@ -182,26 +182,53 @@ for nf = 1:NframesNew
         a = norm(aspect)/4;
         b = norm(aspect)/4;
         c = norm(aspect)/2;
-        radius = norm(aspect)/4;
-        len = norm(aspect);
+        radius = norm(aspect)/4; % a, b
+        len = norm(aspect)/2; % c
+        %%%%%%%%%%%%%%%%%%%%%%%% method 1 (dot production) %%%%%%%%%%%%%%%%%%%%%
         % Calculate theta
-        Cos_Theta_i = dot(Tx_pos-mid,aspect)/norm(mid-Tx_pos)/norm(aspect);
+        Cos_Theta_i = dot(mid-Tx_pos,aspect)/norm(mid-Tx_pos)/norm(aspect);
         Theta_i = acos(Cos_Theta_i);
-        Cos_Theta_s = dot(Rx_pos-mid,aspect)/norm(mid-Rx_pos)/norm(aspect);
+        Cos_Theta_s = dot(mid-Rx_pos,aspect)/norm(mid-Rx_pos)/norm(aspect);
         Theta_s = acos(Cos_Theta_s);
-%         % Calculate phi
-%         Sin_Phi_i = (Tx_pos(2) - mid(2))/sqrt((Tx_pos(1)-mid(1))^2+(Tx_pos(2)-mid(2))^2);
-%         Phi_i = asin(Sin_Phi_i);
-%         Sin_Phi_s = (Rx_pos(2) - mid(2))/sqrt((Rx_pos(1)-mid(1))^2+(Rx_pos(2)-mid(2))^2);
-%         Phi_s = asin(Sin_Phi_s);
+        % Calculate phi (possible wrong)
+        Sin_Phi_i = (Tx_pos(2) - mid(2))/sqrt((Tx_pos(1)-mid(1))^2+(Tx_pos(2)-mid(2))^2);
+        Phi_i = asin(Sin_Phi_i);
+        Sin_Phi_s = (Rx_pos(2) - mid(2))/sqrt((Rx_pos(1)-mid(1))^2+(Rx_pos(2)-mid(2))^2);
+        Phi_s = asin(Sin_Phi_s);
         % Calculate bistatic phi
         normal_vector = aspect / norm(aspect);
         Tx_projection = Tx_pos - dot(Tx_pos - mid, normal_vector) * normal_vector;
         Rx_projection = Rx_pos - dot(Rx_pos - mid, normal_vector) * normal_vector;
         bistatic_angle_phi = acos(dot(Tx_projection - mid, Rx_projection - mid) / (norm(Tx_projection - mid) * norm(Rx_projection - mid)));
+        %%%%%%%%%%%%%%%%%%%%%%%% method 2 (transformation matrix) %%%%%%%%%%%%%%%%%%%%%%%%
+        V = normal_vector; % normalized cylinder's axis-vector;
+        U = rand(1,3);     % linear independent vector
+        U = V-U/(U*V');    % orthogonal vector to V
+        U = U/sqrt(U*U');  % orthonormal vector to V
+        W = cross(V,U);    % vector orthonormal to V and U
+        W = W/sqrt(W*W');  % orthonormal vector to V and U
+        R = [U.', W.', V.'];
+        T = eye(4);
+        T(1:3, 1:3) = R;
+        T(1:3, 4) = mid;
+        Tx_local = inv(T)*[Tx_pos 1].'; Tx_local = Tx_local(1:3);
+        Rx_local = inv(T)*[Rx_pos 1].'; Rx_local = Rx_local(1:3);
+        [Phi_i2,Theta_i2,R_Tx2] = my_cart2sph(Tx_local(1),Tx_local(2),Tx_local(3));
+        [Phi_s2,Theta_s2,R_Rx2] = my_cart2sph(Rx_local(1),Rx_local(2),Rx_local(3));
         % rcsellipsoid/R^2 is based on bistatic radar range equation
-%         Amp = sqrt(rcsellipsoid(a,b,c,Phi_i,Theta_i,Phi_s,Theta_s))/R_Rx/R_Tx;
-        Amp = brcsellipsoid_circle(len,radius,bistatic_angle_phi,Theta_i,Theta_s)/R_Rx/R_Tx;
+        % These two amplitudes are equal
+        Amp = sqrt(brcsellipsoid_circle(len,radius,bistatic_angle_phi,Theta_i,Theta_s))/R_Rx/R_Tx;
+        Amp2 = sqrt(rcsellipsoid(a,b,c,Phi_i2,Theta_i2,Phi_s2,Theta_s2))/R_Rx/R_Tx;
+        
+%         sin(Theta_i)-sin(Theta_i2)
+%         sin(Theta_s)-sin(Theta_s2)
+%         cos(Theta_i)+cos(Theta_i2)
+%         cos(Theta_s)+cos(Theta_s2)
+%         R_Tx-R_Tx2
+%         R_Rx-R_Rx2
+%         bistatic_angle_phi-abs(Phi_s2-Phi_i2)
+%         Amp-Amp2
+
         Phase = exp(-1i*2*pi*(R_Tx+R_Rx)/lambda);
         rcs_joint = Amp*Phase;
         if isnan(rcs_joint)
@@ -213,7 +240,6 @@ for nf = 1:NframesNew
 end
 
 RCS = RCS + (AWGN_mean + AWGN_var*rand(size(RCS)));
-
 %% micro-Doppler signature
 % 1/fs*v < c/fc; fs>fc/c*v
 F = fs;
