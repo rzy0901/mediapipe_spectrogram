@@ -41,7 +41,14 @@ def test2():
 
 if __name__ == "__main__":
 
-    test2()
+    video2keypoints(input_path="./videos/1.mp4", # 输入视频路径  
+                # output_path="./output2/push_pull", # 输出关键点路径
+                display_captured=True, # 显示坐标点转化GUI截面
+                loop=True, # 循环播放
+                static_hand=False, # 固定手部位置，减少抖动
+                smoothing="OneEuroFilter", # 选择滤波器
+                )
+    # test2()
 
 
     # video2keypoints(input_path=0,display_captured=True,static_hand=False,smoothing="") # webcam visualization

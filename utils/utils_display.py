@@ -58,7 +58,7 @@ class DisplayHand:
             else:
                 self.vis = o3d.visualization.Visualizer()
                 self.vis.create_window(
-                    width=self.intrin['width'], height=self.intrin['height'])
+                    width=self.intrin['width'], height=self.intrin['height'],window_name='Motion Converter')
             self.vis.get_render_option().point_size = 8.0
             joint = np.zeros((21,3))
 
@@ -77,11 +77,12 @@ class DisplayHand:
                 b.points = o3d.utility.Vector3dVector(joint)
                 b.colors = o3d.utility.Vector3dVector(self.color_[1:])
                 b.lines  = o3d.utility.Vector2iVector(
-                    [[0,1], [1,2],  [2,3],  [3,4],    # Thumb
-                     [0,5], [5,6],  [6,7],  [7,8],    # Index
-                     [0,9], [9,10], [10,11],[11,12],  # Middle
-                     [0,13],[13,14],[14,15],[15,16],  # Ring
-                     [0,17],[17,18],[18,19],[19,20]]) # Little
+                    [[0,1], [1,2],  [2,3],  [3,4],    
+                     [0,5], [5,6],  [6,7],  [7,8],   
+                     [9,10], [10,11],[11,12],  
+                     [13,14],[14,15],[15,16],  
+                     [0,17],[17,18],[18,19],[19,20],
+                     [5,9],[9,13],[13,17]]) 
                 self.bone.append(b)
 
             # Draw world reference frame
@@ -133,6 +134,11 @@ class DisplayHand:
                     solutions.hands.HAND_CONNECTIONS,
                     solutions.drawing_styles.get_default_hand_landmarks_style(),
                     solutions.drawing_styles.get_default_hand_connections_style())
+            # Label fps
+            if p['fps']>0:
+                cv2.putText(img, 'FPS: %.1f' % (p['fps']),
+                    (0, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)   
+
 
     def draw2d(self, img, param):
         img_height, img_width, _ = img.shape

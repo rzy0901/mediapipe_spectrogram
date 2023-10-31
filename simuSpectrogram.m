@@ -1,6 +1,4 @@
-function simuSpectrogram(Tx_pos,Rx_pos,fc,fs,AWGN_mean,AWGN_var,thres_A_TRD, ...
-    drawScenario,rcsRenderinng,input_mat_path,using_camera_coordinate,connections, ...
-    output_jpg_path,output_gif_path,pic_save)
+function simuSpectrogram(Tx_pos,Rx_pos,fc,fs,AWGN_mean,AWGN_var,thres_A_TRD,drawScenario,rcsRenderinng,input_mat_path,using_camera_coordinate,connections,output_jpg_path,output_gif_path,pic_save)
 % This codes could simulate spectrogram of a 21 keypoint hand using primitive based method.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Input:
@@ -18,7 +16,7 @@ function simuSpectrogram(Tx_pos,Rx_pos,fc,fs,AWGN_mean,AWGN_var,thres_A_TRD, ...
 % false for hand joints in hand world coordinate (no translations).
 % connections: Regoin of interest for hand bone connections.
 % output_jpg_path: output full file path for spectrogram figure.
-% output_gif_path: output full file path for
+% output_gif_path: output full file path for simulation.
 % pic_save: whether save the generated result to disk.
 % Output:
 % Simulation gifs and spectrogram figures.
