@@ -1,7 +1,7 @@
 clc; clear; close all;
 addpath("../")
 rcsRenderinng = false;
-drawCamera = true;
+drawCamera = false;
 load("push_pull.mat");
 if drawCamera == false
     keypoints = handword_keypoints;
@@ -26,9 +26,9 @@ for ii = 1
     y = squeeze(keypoints(ii,:,2));
     z = squeeze(keypoints(ii,:,3));
     if rcsRenderinng == true
-            hand = plot3(z,x,y,'.','markersize', 20,'Color',"k");
+        hand = plot3(z,x,y,'.','markersize', 20,'Color',"k");
     else
-            hand = plot3(z,x,y,'.','markersize', 20,'Color',"b");
+        hand = plot3(z,x,y,'.','markersize', 20,'Color',"b");
     end
     hold on;
     if drawCamera == true
@@ -53,7 +53,7 @@ for ii = 1
             colormap white;
         end
     end
-    xlabel('Z(m)'); ylabel('X(m)'); zlabel('Y(m)'); % title(sprintf('Timestamp: %f (ms)',timestampList(ii)));
+    xlabel('Z (m)'); ylabel('X (m)'); zlabel('Y (m)'); % title(sprintf('Timestamp: %f (ms)',timestampList(ii)));
     grid on;
     origin = [0, 0, 0];
     % 指定箭头的长度
@@ -67,13 +67,22 @@ for ii = 1
     quiver3(origin(3), origin(1), origin(2), xAxis(3), xAxis(1), xAxis(2), 'r', 'LineWidth', 3);
     quiver3(origin(3), origin(1), origin(2), yAxis(3), yAxis(1), yAxis(2), 'g', 'LineWidth', 3);
     quiver3(origin(3), origin(1), origin(2), zAxis(3), zAxis(1), zAxis(2), 'b', 'LineWidth', 3);
+    % 添加文本标签
     if drawCamera == true
-        legend([camera hand] ,'camera','hand joints');
+        text(xAxis(3) - 0.025, xAxis(1), xAxis(2), 'x', 'FontSize', 18, 'Color', 'r');
+        text(yAxis(3), yAxis(1) + 0.025, yAxis(2), 'y', 'FontSize', 18, 'Color', 'g');
+        text(zAxis(3), zAxis(1), zAxis(2) + 0.025, 'z', 'FontSize', 18, 'Color', 'b');
+        legend([camera hand] ,'Camera','Hand joints','Location','northwest');
+    else
+        text(xAxis(3) - 0.01, xAxis(1), xAxis(2), 'x', 'FontSize', 18, 'Color', 'r');
+        text(yAxis(3), yAxis(1) + 0.01, yAxis(2), 'y', 'FontSize', 18, 'Color', 'g');
+        text(zAxis(3), zAxis(1), zAxis(2) + 0.01, 'z', 'FontSize', 18, 'Color', 'b');
     end
     set(gca,'ZDir','reverse'); %Y
     axis equal;
     view(-60,30)
     %     set(gcf,'units','normalized','outerposition',[0 0 1 1]);
     drawnow;
+    set(gca, 'FontSize', 18);
 end
 % tightfig

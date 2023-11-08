@@ -40,7 +40,9 @@ arguments
 end
 
 load(input_mat_path);
-
+if fs < fps
+    fs = fps;
+end
 if ~using_camera_coordinate
     keypoints = handword_keypoints;
 end
@@ -262,7 +264,9 @@ s = mag2db(abs(s));
 h = imagesc(t, f, s);
 xlabel('Time (s)')
 ylabel('Doppler frequency (Hz)')
+if fs >= 1000
 ylim([-600 600]);
+end
 axis xy; % 设置坐标轴方向，使频率轴朝上
 colormap jet;
 colorbar;
@@ -273,7 +277,9 @@ caxis([thres_A_TRD,0]);
 fig = figure;
 ax = axes;
 new_handle = copyobj(h,ax);
+if fs >= 1000
 ylim([-600 600]);
+end
 xlim([t(1) t(end)]);
 colormap jet;
 caxis([thres_A_TRD,0]);
