@@ -1,0 +1,11 @@
+test.gif
+*.pyc
+data.mp4
+data.mat
+*.asv
+*.zip
+data/
+output*/
+videos/
+trash_codes_bak/
+*.dll
