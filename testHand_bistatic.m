@@ -6,11 +6,13 @@ Rx_pos = [0 -0.1 0.1]; % XYZ
 % Rx_pos = [0.4 -0.1 0.1]; % XYZ
 fc = 60.48e9;
 fs = 2000;
-AWGN_mean = 0.05;
-AWGN_var = 0.01;
+% AWGN_mean = 0.05;
+% AWGN_var = 0.01;
 % AWGN_mean = 0.005;
 % AWGN_var = 0.0001;
-thres_A_TRD = -30;
+AWGN_mean = 0;
+AWGN_var = 0;
+thres_A_TRD = -40;
 drawScenario = false;
 rcsRendering = true;
 using_camera_coordinate = true;
@@ -26,7 +28,7 @@ HAND_FINGER_CONNECTIONS = [HAND_THUMB_CONNECTIONS; HAND_INDEX_FINGER_CONNECTIONS
 connections = [HAND_PALM_CONNECTIONS; HAND_FINGER_CONNECTIONS];
 
 close all;
-name = 'push_pull';
+name = 'rub_fingers';
 input_mat_path = sprintf('./output2/%s.mat',name);
 output_jpg_path = sprintf('./output2/%s.jpg',name);
 output_gif_path = sprintf('./output2/%s.gif',name);

@@ -1,4 +1,4 @@
-function simuSpectrogram(Tx_pos,Rx_pos,fc,fs,AWGN_mean,AWGN_var,thres_A_TRD,drawScenario,rcsRenderinng,input_mat_path,using_camera_coordinate,connections,output_jpg_path,output_gif_path,pic_save)
+function simuSpectrogram_v2(Tx_pos,Rx_pos,fc,fs,AWGN_mean,AWGN_var,thres_A_TRD,drawScenario,rcsRenderinng,input_mat_path,using_camera_coordinate,connections,output_jpg_path,output_gif_path,pic_save)
 % This codes could simulate spectrogram of a 21 keypoint hand using primitive based method.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Input:
@@ -39,7 +39,6 @@ arguments
     pic_save (1,1) logical
 end
 
-rng(0)
 load(input_mat_path);
 if fs < fps
     fs = fps;
@@ -47,6 +46,10 @@ end
 if ~using_camera_coordinate
     keypoints = handword_keypoints;
 end
+
+keypoints([1,end-1],:,:)=[]; % keypoints in XYZ
+timestampList([1,end-1])=[];
+timestampList = timestampList - timestampList(1);
 
 % keypoints = smoothdata(keypoints,1,"rlowess",5);
 
@@ -134,7 +137,7 @@ if drawScenario == true
         else
             legend([hand_center tx rx hand] ,'hand center','transmitter','receiver','hand joints');
         end
-        set(gca,'ZDir','reverse'); %Y
+%         set(gca,'ZDir','reverse'); %Y
         set(gcf,'units','normalized','outerposition',[0 0 1 1]);
         drawnow;
 
@@ -221,7 +224,6 @@ for nf = 1:NframesNew
         [Phi_s2,Theta_s2,R_Rx2] = my_cart2sph(Rx_local(1),Rx_local(2),Rx_local(3));
         % rcsellipsoid/R^2 is based on bistatic radar range equation
         % These two amplitudes are equal
-%         rcss(nf,jj) = brcsellipsoid_circle(len,radius,bistatic_angle_phi,Theta_i,Theta_s);
         Amp = sqrt(brcsellipsoid_circle(len,radius,bistatic_angle_phi,Theta_i,Theta_s))/R_Rx/R_Tx;
         Amp2 = sqrt(rcsellipsoid(a,b,c,Phi_i2,Theta_i2,Phi_s2,Theta_s2))/R_Rx/R_Tx;
         
@@ -242,33 +244,9 @@ for nf = 1:NframesNew
         cir = cir + cir_joint;
     end
     CIR(nf) = cir;
-    
-end
-% max(rcss(:))
-% min(rcss(:))
-% mean(rcss(:))
-% mean(abs(CIR).^2)
-
-% target unrelared
-meanRCS = 0.005;
-stdRCS = 0.001;
-numScatterers = 10;
-RCSs = meanRCS + stdRCS * randn(numScatterers, 1);
-cuboidDimensions = [2, 2, 2]; % 2m x 2m x 2m cuboid
-scattererLocations = -cuboidDimensions / 2 + cuboidDimensions .* rand(numScatterers, 3);
-transmitterLocation = [0, -0.1, -1.5];
-receiverLocation = [0.2, -0.1, 0.1];
-% narrowband target unrelared channel
-CIR_static = 0;
-for ii = 1:1:size(scattererLocations,1)
-    R_Tx = norm(scattererLocations(ii,:)-Tx_pos);
-    R_Rx = norm(scattererLocations(ii,:)-Rx_pos);
-    Amp = sqrt(RCSs(ii))/R_Rx/R_Tx;
-    Phase = exp(-1i*2*pi*(R_Tx+R_Rx)/lambda*2);
-    CIR_static = CIR_static + Amp*Phase;
 end
 
-CIR = CIR + (AWGN_mean + AWGN_var*rand(size(CIR)))+CIR_static;
+CIR = CIR + (AWGN_mean + AWGN_var*rand(size(CIR)));
 %% micro-Doppler signature
 % 1/fs*v < c/fc; fs>fc/c*v
 F = fs;
@@ -293,29 +271,32 @@ s = mag2db(abs(s));
 h = imagesc(t, f, s);
 xlabel('Time (s)')
 ylabel('Doppler frequency (Hz)')
-if fs >= 1000
-ylim([-600 600]);
-end
+% if fs >= 1000
+% ylim([-2000 2000]);
+% end
 axis xy; % 设置坐标轴方向，使频率轴朝上
 colormap jet;
 colorbar;
 caxis([thres_A_TRD,0]);
-% tightfig;
-
-%% Remove lim
-fig = figure;
-ax = axes;
-new_handle = copyobj(h,ax);
-if fs >= 1000
-ylim([-600 600]);
-end
-xlim([t(1) t(end)]);
-colormap jet;
-caxis([thres_A_TRD,0]);
-axis off
-set(gca,'xtick',[],'ytick',[],'xcolor','w','ycolor','w')
-set(gca,'looseInset',[0 0 0 0]);
 if pic_save == true
     saveas(gcf,output_jpg_path)
 end
+% tightfig;
+
+% %% Remove lim
+% fig = figure;
+% ax = axes;
+% new_handle = copyobj(h,ax);
+% if fs >= 1000
+% ylim([-2000 2000]);
+% end
+% xlim([t(1) t(end)]);
+% colormap jet;
+% caxis([thres_A_TRD,0]);
+% axis off
+% set(gca,'xtick',[],'ytick',[],'xcolor','w','ycolor','w')
+% set(gca,'looseInset',[0 0 0 0]);
+% if pic_save == true
+%     saveas(gcf,output_jpg_path)
+% end
 end
